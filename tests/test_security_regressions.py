@@ -500,7 +500,7 @@ def test_require_user_rejects_unauthenticated(monkeypatch):
 def test_inprocess_pollers_gate(monkeypatch):
     """The ODYSSEUS_INPROCESS_POLLERS env var must let operators kill
     the asyncio pollers when cron / systemd is driving the one-shot
-    `odysseus-mail poll-*` CLI subcommands instead. Two pollers racing
+    `garry-ai-mail poll-*` CLI subcommands instead. Two pollers racing
     on the same SQLite would mark scheduled rows as 'sent' twice."""
     import sys as _sys
     _sys.modules.pop("routes.email_pollers", None)
@@ -752,7 +752,7 @@ def _load_search_content_for_test(monkeypatch, name="services.search.content_und
     analytics.RateLimitError = RuntimeError
     analytics.error_logger = _types.SimpleNamespace(error=lambda *a, **k: None)
     cache = _types.ModuleType("services.search.cache")
-    cache.CONTENT_CACHE_DIR = Path("/tmp/odysseus-test-content-cache")
+    cache.CONTENT_CACHE_DIR = Path("/tmp/garry-ai-test-content-cache")
     cache.content_cache_index = {}
     cache.generate_cache_key = lambda url: "test-cache-key"
     cache.cleanup_cache = lambda: None

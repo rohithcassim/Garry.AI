@@ -765,7 +765,7 @@ async def _auto_summarize_pass_single(days_back: int = 1, account_id: str | None
                                     cfg = _get_email_config(account_id, owner=account_owner)
                                     to_addr = cfg["from_address"]  # self-email
 
-                                    # Deep-link to open the original email in Odysseus (if public URL is configured).
+                                    # Deep-link to open the original email in Garry.AI (if public URL is configured).
                                     # Hash format `#email=FOLDER:UID` is handled by static/js/emailInbox.js:_maybeOpenFromHash.
                                     from src.settings import load_settings as _ls
                                     _pub = (_ls().get("app_public_url") or "").rstrip("/")
@@ -777,7 +777,7 @@ async def _auto_summarize_pass_single(days_back: int = 1, account_id: str | None
                                     alert_body = (
                                         f"Your AI assistant flagged this email as {urgency.upper()} urgency.\n\n"
                                         f"Reason: {reason}\n\n"
-                                        + (f"Open in Odysseus: {open_url}\n\n" if open_url else "")
+                                        + (f"Open in Garry.AI: {open_url}\n\n" if open_url else "")
                                         + f"---\n"
                                         f"From: {sender}\n"
                                         f"Subject: {subject}\n"
@@ -785,14 +785,14 @@ async def _auto_summarize_pass_single(days_back: int = 1, account_id: str | None
                                         f"{body[:800]}"
                                         + ("..." if len(body or "") > 800 else "")
                                     )
-                                    # HTML alternative with a clickable "Open in Odysseus" button
+                                    # HTML alternative with a clickable "Open in Garry.AI" button
                                     import html as _h
                                     body_excerpt = _h.escape((body or "")[:800])
                                     open_html = (
                                         f'<p><a href="{_h.escape(open_url)}" '
                                         'style="display:inline-block;padding:8px 14px;background:#50fa7b;'
                                         'color:#000;text-decoration:none;border-radius:4px;font-weight:bold">'
-                                        'Open in Odysseus</a></p>'
+                                        'Open in Garry.AI</a></p>'
                                     ) if open_url else ""
                                     alert_html = (
                                         f'<div style="font-family:system-ui,sans-serif;max-width:640px">'
@@ -991,7 +991,7 @@ def _scheduled_poll_once() -> dict:
         now_iso = datetime.utcnow().isoformat()
         conn = sqlite3.connect(SCHEDULED_DB)
         cols = [row[1] for row in conn.execute("PRAGMA table_info(scheduled_emails)").fetchall()]
-        kind_expr = "odysseus_kind" if "odysseus_kind" in cols else "'scheduled' AS odysseus_kind"
+        kind_expr = "garry-ai_kind" if "garry-ai_kind" in cols else "'scheduled' AS garry-ai_kind"
         owner_expr = "owner" if "owner" in cols else "'' AS owner"
         rows = conn.execute(f"""
             SELECT id, to_addr, cc, bcc, subject, body, in_reply_to, references_hdr, attachments, account_id, {kind_expr}, {owner_expr}
@@ -1005,7 +1005,7 @@ def _scheduled_poll_once() -> dict:
             try:
                 attachments = json.loads(r[8] or "[]")
                 row_account_id = r[9] if len(r) > 9 else None
-                odysseus_kind = r[10] if len(r) > 10 else "scheduled"
+                garry-ai_kind = r[10] if len(r) > 10 else "scheduled"
                 row_owner = (r[11] if len(r) > 11 else "") or _owner_for_email_account(row_account_id)
                 cfg = _get_email_config(row_account_id, owner=row_owner)
                 has_atts = bool(attachments)
@@ -1021,9 +1021,9 @@ def _scheduled_poll_once() -> dict:
                     outer["Cc"] = r[2]
                 outer["Subject"] = r[4] or ""
                 outer["Date"] = datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S +0000")
-                outer["X-Odysseus-Origin"] = "odysseus-ui"
-                outer["X-Odysseus-Kind"] = re.sub(r"[^A-Za-z0-9_.-]", "-", odysseus_kind or "scheduled")[:64]
-                outer["X-Odysseus-Ref"] = sid
+                outer["X-Garry.AI-Origin"] = "garry-ai-ui"
+                outer["X-Garry.AI-Kind"] = re.sub(r"[^A-Za-z0-9_.-]", "-", garry-ai_kind or "scheduled")[:64]
+                outer["X-Garry.AI-Ref"] = sid
                 if r[6]:
                     outer["In-Reply-To"] = r[6]
                 if r[7]:
@@ -1074,7 +1074,7 @@ def _scheduled_poll_once() -> dict:
 async def _scheduled_email_poller():
     """Background task that checks for due scheduled emails every 30
     seconds. Each tick delegates to `_scheduled_poll_once`, which is
-    also exposed via the `odysseus-mail poll-scheduled` CLI for
+    also exposed via the `garry-ai-mail poll-scheduled` CLI for
     cron-driven deployments."""
     import asyncio
 
@@ -1092,7 +1092,7 @@ _summarize_task = None
 def _inprocess_pollers_enabled() -> bool:
     """Honour `ODYSSEUS_INPROCESS_POLLERS` — set to `0`/`false`/`no`/`off`
     to disable the asyncio tasks so a cron / systemd-timer setup driving
-    `odysseus-mail poll-scheduled` is the sole external driver. The legacy
+    `garry-ai-mail poll-scheduled` is the sole external driver. The legacy
     auto-summary/reply poller no longer starts here; scheduled Tasks own that
     work so Email settings are only feature gates, not a second scheduler."""
     import os
@@ -1110,7 +1110,7 @@ def _start_poller():
     if not _inprocess_pollers_enabled():
         logger.info(
             "In-process email pollers disabled (ODYSSEUS_INPROCESS_POLLERS=0); "
-            "drive `odysseus-mail poll-scheduled` externally."
+            "drive `garry-ai-mail poll-scheduled` externally."
         )
         return
     import asyncio

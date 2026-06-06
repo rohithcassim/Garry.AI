@@ -99,7 +99,7 @@ PTY_SUPPORTED = pty is not None and fcntl is not None and hasattr(os, "setsid")
 
 
 DOCKER_IN_CONTAINER_HINT = (
-    "Not available inside the Odysseus container by design. The image ships no "
+    "Not available inside the Garry.AI container by design. The image ships no "
     "docker CLI and no host socket is mounted. Run Docker-backed launches on a "
     "remote server, where docker is checked over SSH. Mounting /var/run/docker.sock "
     "into the container would grant it host-root access, so only do that if you "
@@ -215,7 +215,7 @@ def _package_pip_update_status(pkg: dict, probe: dict | None = None) -> PackageU
     may be on PATH without matching Python package metadata.
     """
     if pkg.get("kind") == "system" or not pkg.get("pip"):
-        return PackageUpdateStatus(False, "Update this system dependency outside Odysseus.")
+        return PackageUpdateStatus(False, "Update this system dependency outside Garry.AI.")
 
     name = pkg.get("name")
     binaries = probe.get("binaries") if isinstance(probe, dict) and isinstance(probe.get("binaries"), dict) else {}
@@ -229,7 +229,7 @@ def _package_pip_update_status(pkg: dict, probe: dict | None = None) -> PackageU
     if name == "vllm" and binaries.get("vllm") and not dists.get("vllm"):
         return PackageUpdateStatus(
             False,
-            "Using a vLLM CLI on PATH without Python package metadata; update it outside Odysseus.",
+            "Using a vLLM CLI on PATH without Python package metadata; update it outside Garry.AI.",
         )
 
     return PackageUpdateStatus(True, "Update uses pip in the selected Python environment.")
@@ -352,7 +352,7 @@ def _find_line_break(buf):
 EXEC_TIMEOUT = 30  # seconds — shorter than agent's 60s
 STREAM_TIMEOUT = 120  # default for short commands
 MAX_OUTPUT = 200_000  # truncate limit
-TMUX_LOG_DIR = Path(tempfile.gettempdir()) / "odysseus-tmux"
+TMUX_LOG_DIR = Path(tempfile.gettempdir()) / "garry-ai-tmux"
 PTY_UNSUPPORTED_ERROR = "pty_unsupported"
 
 

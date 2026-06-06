@@ -201,7 +201,7 @@ def test_vllm_preflight_reports_cli_and_version():
 
     assert 'export PATH="$HOME/.local/bin:$PATH"' in script
     assert 'ODYSSEUS_VLLM_BIN="$(command -v vllm 2>/dev/null || true)"' in script
-    assert 'echo "[odysseus] vLLM CLI: $ODYSSEUS_VLLM_BIN"' in script
+    assert 'echo "[garry-ai] vLLM CLI: $ODYSSEUS_VLLM_BIN"' in script
     assert '"$ODYSSEUS_VLLM_BIN" --version' in script
     assert 'ODYSSEUS_PREFLIGHT_EXIT=127' in script
 
@@ -421,7 +421,7 @@ def test_llama_cpp_linux_bootstrap_checks_cudart_before_cuda_build():
     _append_llama_cpp_linux_accel_build_lines(runner_lines)
     script = "\n".join(runner_lines)
 
-    assert '_odysseus_has_cudart' in script
+    assert '_garry-ai_has_cudart' in script
     assert "grep -q 'libcudart\\.so'" in script
     # lib64 and lib variants for CUDA_HOME and /usr/local/cuda
     assert '$_cuh/lib64/libcudart.so' in script
@@ -431,7 +431,7 @@ def test_llama_cpp_linux_bootstrap_checks_cudart_before_cuda_build():
     # pip-installed nvidia runtime wheel sibling path
     assert 'cuda_runtime/lib/libcudart.so' in script
     # entire helper definition precedes the CUDA cmake invocation
-    assert script.index('_odysseus_has_cudart') < script.index('DGGML_CUDA=ON')
+    assert script.index('_garry-ai_has_cudart') < script.index('DGGML_CUDA=ON')
 
 
 def test_llama_cpp_linux_bootstrap_cuda_cmake_present_when_cudart_found():

@@ -47,10 +47,10 @@ from routes.cookbook_helpers import (
 
 _HF_TOKEN_STATUS_SNIPPET = (
     'if [ -n "$HF_TOKEN" ]; then '
-    'echo "[odysseus] HF token: applied"; '
+    'echo "[garry-ai] HF token: applied"; '
     'else '
-    'echo "[odysseus] HF token: NOT SET — gated/private models will be denied. '
-    'Add one in Odysseus Settings -> Cookbook -> HuggingFace Token."; '
+    'echo "[garry-ai] HF token: NOT SET — gated/private models will be denied. '
+    'Add one in Garry.AI Settings -> Cookbook -> HuggingFace Token."; '
     'fi'
 )
 
@@ -164,7 +164,7 @@ def setup_cookbook_routes() -> APIRouter:
             # which_tool so the .exe is found even when PATHEXT is unusual.
             ssh_keygen = which_tool("ssh-keygen") or "ssh-keygen"
             proc = await asyncio.create_subprocess_exec(
-                ssh_keygen, "-t", "ed25519", "-N", "", "-C", "odysseus-cookbook", "-f", str(key_path),
+                ssh_keygen, "-t", "ed25519", "-N", "", "-C", "garry-ai-cookbook", "-f", str(key_path),
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE,
             )
@@ -315,7 +315,7 @@ def setup_cookbook_routes() -> APIRouter:
             lines.append(f"export HF_TOKEN='{_bash_squote(req.hf_token)}'")
         # Ensure pip-user scripts (e.g. hf CLI installed via --user) are on PATH
         lines.append('export PATH="$HOME/.local/bin:$PATH"')
-        # When Odysseus runs from a venv (e.g. native macOS install), put its bin
+        # When Garry.AI runs from a venv (e.g. native macOS install), put its bin
         # on PATH so the tmux shell finds the bundled `hf`/`python3` without an
         # activated venv. Local bash runs only — meaningless over SSH.
         if not req.remote_host:
@@ -352,7 +352,7 @@ def setup_cookbook_routes() -> APIRouter:
             # ── Windows remote: generate .ps1 runner, use Start-Process for background ──
             remote_runner = f".{session_id}_run.ps1"
             ps_lines = []
-            ps_lines.append('$sessionDir = "$env:TEMP\\odysseus-sessions"')
+            ps_lines.append('$sessionDir = "$env:TEMP\\garry-ai-sessions"')
             ps_lines.append('New-Item -ItemType Directory -Force -Path $sessionDir | Out-Null')
             ps_lines.append('$env:PYTHONIOENCODING = "utf-8"')
             ps_lines.append('$env:PYTHONUTF8 = "1"')
@@ -395,7 +395,7 @@ def setup_cookbook_routes() -> APIRouter:
             _pf = f"-p {_port} " if _port and _port != "22" else ""
             # Start-Process creates a fully detached process that survives SSH disconnect
             launch_ps = (
-                "$sd = \\\"$env:TEMP\\odysseus-sessions\\\"; "
+                "$sd = \\\"$env:TEMP\\garry-ai-sessions\\\"; "
                 f"Start-Process powershell -ArgumentList '-ExecutionPolicy','Bypass','-File','$HOME\\{remote_runner}' "
                 f"-RedirectStandardOutput \\\"$sd\\{session_id}.log\\\" "
                 f"-RedirectStandardError \\\"$sd\\{session_id}.err.log\\\" "
@@ -577,7 +577,7 @@ def setup_cookbook_routes() -> APIRouter:
                 cwd=str(Path.home()),
             )
         else:
-            # LOCAL scan: use sys.executable (the venv Python Odysseus is already
+            # LOCAL scan: use sys.executable (the venv Python Garry.AI is already
             # running under) — it's guaranteed real Python on all platforms.
             # Falling back to which_tool on Windows risks hitting the Microsoft
             # Store stub alias for "python3"/"python", which prints
@@ -770,7 +770,7 @@ def setup_cookbook_routes() -> APIRouter:
             port = 8080  # llama.cpp's llama-server default — the Apple Silicon path
 
         # Determine host (mirrors the image path: SSH alias for remote serves).
-        # For local serves while Odysseus runs inside Docker, "localhost"
+        # For local serves while Garry.AI runs inside Docker, "localhost"
         # resolves to the container itself — useless. Use host.docker.internal
         # which compose maps to the actual host, matching what /setup adds
         # for Ollama by hand.
@@ -924,7 +924,7 @@ def setup_cookbook_routes() -> APIRouter:
             # ── Windows remote: generate .ps1 serve runner ──
             remote_runner = f".{session_id}_run.ps1"
             ps_lines = []
-            ps_lines.append('$sessionDir = "$env:TEMP\\odysseus-sessions"')
+            ps_lines.append('$sessionDir = "$env:TEMP\\garry-ai-sessions"')
             ps_lines.append('New-Item -ItemType Directory -Force -Path $sessionDir | Out-Null')
             ps_lines.append('$env:PYTHONIOENCODING = "utf-8"')
             ps_lines.append('$env:PYTHONUTF8 = "1"')
@@ -963,7 +963,7 @@ def setup_cookbook_routes() -> APIRouter:
             _Pf = f"-P {_port} " if _port and _port != "22" else ""
             _pf = f"-p {_port} " if _port and _port != "22" else ""
             launch_ps = (
-                "$sd = \\\"$env:TEMP\\odysseus-sessions\\\"; "
+                "$sd = \\\"$env:TEMP\\garry-ai-sessions\\\"; "
                 f"Start-Process powershell -ArgumentList '-ExecutionPolicy','Bypass','-File','$HOME\\{remote_runner}' "
                 f"-RedirectStandardOutput \\\"$sd\\{session_id}.log\\\" "
                 f"-RedirectStandardError \\\"$sd\\{session_id}.err.log\\\" "
@@ -986,14 +986,14 @@ def setup_cookbook_routes() -> APIRouter:
             # the post-crash interactive shell's neofetch banner ALSO gets
             # teed into the log file and `tail -N` returns ONLY the banner —
             # the actual traceback ends up earlier than the tail window.
-            runner_lines.append("mkdir -p /tmp/odysseus-tmux 2>/dev/null || true")
+            runner_lines.append("mkdir -p /tmp/garry-ai-tmux 2>/dev/null || true")
             runner_lines.append("exec 3>&1 4>&2")
             runner_lines.append(
-                f"exec > >(tee -a /tmp/odysseus-tmux/{session_id}.log) 2>&1"
+                f"exec > >(tee -a /tmp/garry-ai-tmux/{session_id}.log) 2>&1"
             )
             runner_lines.extend(_user_shell_path_bootstrap())
             runner_lines.append('ODYSSEUS_PREFLIGHT_EXIT=""')
-            # Put Odysseus's own venv bin on PATH (local runs only) so the serve
+            # Put Garry.AI's own venv bin on PATH (local runs only) so the serve
             # shell resolves the bundled python3/hf, mirroring the download flow.
             if not remote:
                 runner_lines.append(_local_tooling_path_export(sys.executable))
@@ -1093,8 +1093,8 @@ def setup_cookbook_routes() -> APIRouter:
                 runner_lines.append('    ODYSSEUS_OLLAMA_PORT="$_ody_try_port"')
                 runner_lines.append('    break')
                 runner_lines.append('  fi')
-                runner_lines.append('  echo "[odysseus] Ollama API ready on port ${ODYSSEUS_OLLAMA_PORT}: ${ODYSSEUS_OLLAMA_URL}"')
-                runner_lines.append('  echo "[odysseus] This task is monitoring an existing Ollama server; stopping it here will not stop an external Docker/system service."')
+                runner_lines.append('  echo "[garry-ai] Ollama API ready on port ${ODYSSEUS_OLLAMA_PORT}: ${ODYSSEUS_OLLAMA_URL}"')
+                runner_lines.append('  echo "[garry-ai] This task is monitoring an existing Ollama server; stopping it here will not stop an external Docker/system service."')
                 if local_windows:
                     # Windows detached process has no TTY; exec bash -i crashes.
                     # Keep the monitoring task alive with a sleep loop.
@@ -1113,8 +1113,8 @@ def setup_cookbook_routes() -> APIRouter:
                 runner_lines.append('fi')
                 runner_lines.append('ODYSSEUS_OLLAMA_URL="http://${ODYSSEUS_OLLAMA_HOST}:${ODYSSEUS_OLLAMA_PORT}"')
                 if remote and _ollama_host in ("0.0.0.0", "::"):
-                    runner_lines.append('echo "[odysseus] WARNING: remote Ollama will bind to ${ODYSSEUS_OLLAMA_HOST}:${ODYSSEUS_OLLAMA_PORT} so Odysseus can reach it from this host."')
-                    runner_lines.append('echo "[odysseus] Ollama has no built-in authentication; expose this only on a trusted LAN/VPN or provide an explicit OLLAMA_HOST with your own access controls."')
+                    runner_lines.append('echo "[garry-ai] WARNING: remote Ollama will bind to ${ODYSSEUS_OLLAMA_HOST}:${ODYSSEUS_OLLAMA_PORT} so Garry.AI can reach it from this host."')
+                    runner_lines.append('echo "[garry-ai] Ollama has no built-in authentication; expose this only on a trusted LAN/VPN or provide an explicit OLLAMA_HOST with your own access controls."')
                 runner_lines.append('echo "Starting ollama server on ${ODYSSEUS_OLLAMA_HOST}:${ODYSSEUS_OLLAMA_PORT}..."')
                 runner_lines.append('OLLAMA_HOST="${ODYSSEUS_OLLAMA_HOST}:${ODYSSEUS_OLLAMA_PORT}" ollama serve')
                 if local_windows:
@@ -1298,7 +1298,7 @@ def setup_cookbook_routes() -> APIRouter:
             # Also create the session directory for background tasks
             setup_script = (
                 'powershell -Command "'
-                "New-Item -ItemType Directory -Force -Path $env:TEMP\\odysseus-sessions | Out-Null; "
+                "New-Item -ItemType Directory -Force -Path $env:TEMP\\garry-ai-sessions | Out-Null; "
                 "try { python --version } catch { Write-Host 'ERROR: Python not found — install from python.org'; exit 1 }; "
                 "python -m pip install -q huggingface-hub 2>$null; "
                 "python -c \\\"from huggingface_hub import snapshot_download; print('OK')\\\""
@@ -2125,7 +2125,7 @@ def setup_cookbook_routes() -> APIRouter:
                 cmd = ["python3", "-c", py, repo_id]
             else:
                 # Local Windows: python3 can hit the Microsoft Store stub. Use the
-                # real Python Odysseus is running under (guaranteed to exist).
+                # real Python Garry.AI is running under (guaranteed to exist).
                 import sys as _sys_local
                 cmd = [_sys_local.executable, "-c", py, repo_id]
             try:
@@ -2207,7 +2207,7 @@ def setup_cookbook_routes() -> APIRouter:
                 continue
             if task_platform == "windows" and remote:
                 # Windows: check PID file + Get-Process, read log tail
-                sd = "$env:TEMP\\odysseus-sessions"
+                sd = "$env:TEMP\\garry-ai-sessions"
                 ssh_base = ["ssh"]
                 if _tport and _tport != "22":
                     ssh_base.extend(["-p", str(_tport)])
@@ -2232,7 +2232,7 @@ def setup_cookbook_routes() -> APIRouter:
                 # Capture 500 lines (was 50) so a Python traceback survives
                 # the post-crash neofetch banner + bash prompt that otherwise
                 # fills the visible tail. Without this, output_tail ends up
-                # as just "Locale: C / Ubuntu_Odysseus ❯" and the agent
+                # as just "Locale: C / Ubuntu_Garry.AI ❯" and the agent
                 # can't diagnose the actual error.
                 capture_cmd = ssh_base + [remote, "tmux", "capture-pane", "-t", session_id, "-p", "-S", "-500"]
             elif IS_WINDOWS:
