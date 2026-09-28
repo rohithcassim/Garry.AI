@@ -36424,29 +36424,25 @@ body.theme-frosted .modal {
 .ask-user-other-send { flex-shrink: 0; white-space: nowrap; min-height: 39px; }
 .ask-user-other-send:disabled { opacity: 0.5; cursor: default; }
 /* =========================================================
+/* =========================================================
    GARRY.AI — LIQUID GLASS DARK THEME OVERRIDES
    ========================================================= */
 
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
-body, html {
+:root {
+  --bg: #0b0d12 !important;
+  --fg: #f3f4f6 !important;
+  --panel: rgba(22, 27, 38, 0.7) !important;
+  --border: rgba(255, 255, 255, 0.08) !important;
+  --red: #38bdf8 !important;
+  --accent: #38bdf8 !important;
+  --accent-primary: #38bdf8 !important;
+  --green: #4ade80 !important;
+}
+
+body, html, #app, main {
   font-family: 'Plus Jakarta Sans', -apple-system, sans-serif !important;
   background: radial-gradient(circle at 50% 15%, #162235 0%, #0b0d12 60%, #06070a 100%) !important;
   background-attachment: fixed !important;
-  color: #f3f4f6 !important;
-}
-
-/* Glass Panels & Containers */
-.sidebar, nav, .chat-container, .card, .input-container, [class*="panel"], [class*="sidebar"] {
-  background: rgba(22, 27, 38, 0.65) !important;
-  backdrop-filter: blur(20px) !important;
-  -webkit-backdrop-filter: blur(20px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  border-radius: 16px !important;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
-}
-
-/* Rounded Inputs & Buttons */
-input, textarea, button, .btn {
-  border-radius: 9999px !important;
 }
