@@ -1,22 +1,22 @@
 {
   "name": "garry-ai",
   "version": "0.1.1",
-  "description": "Connect Codex to a scoped Garry.AI instance.",
+  "description": "Connect Codex to a scoped RC.VOID instance.",
   "author": {
-    "name": "Garry.AI"
+    "name": "RC.VOID"
   },
   "skills": "./skills/",
   "interface": {
-    "displayName": "Garry.AI",
-    "shortDescription": "Use scoped Garry.AI tools from Codex.",
-    "longDescription": "Connects Codex terminal sessions to Garry.AI through user-controlled scoped API tokens. Codex must use /api/codex/* endpoints so Garry.AI Settings can enforce tool access.",
-    "developerName": "Garry.AI",
+    "displayName": "RC.VOID",
+    "shortDescription": "Use scoped RC.VOID tools from Codex.",
+    "longDescription": "Connects Codex terminal sessions to RC.VOID through user-controlled scoped API tokens. Codex must use /api/codex/* endpoints so RC.VOID Settings can enforce tool access.",
+    "developerName": "RC.VOID",
     "category": "Productivity",
     "capabilities": [
       "todos",
       "email",
       "scoped-api"
     ],
-    "defaultPrompt": "Use Garry.AI only through configured scoped access. Check capabilities before reading or writing data."
+    "defaultPrompt": "Use RC.VOID only through configured scoped access. Check capabilities before reading or writing data."
   }
 }
