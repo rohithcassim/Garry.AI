@@ -36424,10 +36424,7 @@ body.theme-frosted .modal {
 .ask-user-other-send { flex-shrink: 0; white-space: nowrap; min-height: 39px; }
 .ask-user-other-send:disabled { opacity: 0.5; cursor: default; }
 /* =========================================================
-/* =========================================================
-   GARRY.AI — LIQUID GLASS DARK THEME OVERRIDES
-   ========================================================= */
-
+/* GARRY.AI - LIQUID GLASS DARK THEME OVERRIDES */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
 :root {
@@ -36445,4 +36442,23 @@ body, html, #app, main {
   font-family: 'Plus Jakarta Sans', -apple-system, sans-serif !important;
   background: radial-gradient(circle at 50% 15%, #162235 0%, #0b0d12 60%, #06070a 100%) !important;
   background-attachment: fixed !important;
+}
+
+/* LIQUID GLASS & ACCENT OVERRIDES */
+.sidebar, nav, .chat-input, .card, [class*="panel"], [class*="container"] {
+  background: rgba(15, 20, 28, 0.6) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* BRAND LOGO & BUTTON ACCENTS */
+[class*="logo"], [class*="brand"], .btn-primary, button[type="submit"], [fill="#e54d2e"], [fill="#f25555"], [fill="red"] {
+  color: #38bdf8 !important;
+  fill: #38bdf8 !important;
+}
+
+.btn-primary, button[type="submit"] {
+  background-color: #38bdf8 !important;
+  color: #0b0d12 !important;
 }
